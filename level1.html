@@ -261,9 +261,8 @@
     	{
     		this.physics.world.colliders.remove(this.physics.world.colliders.getActive().find(function(i){
             		return i.name == 'doclose'
-        			}));
-    		tremove();
-    		dopen();
+        			}))
+		dopen();
     	}
     }
    
@@ -328,11 +327,7 @@
     		}
     	    	
     }
-    
-    function tremove()
-    {
-    	doortext.destroy();
-    }
+   
     
     function dclose()
     {
