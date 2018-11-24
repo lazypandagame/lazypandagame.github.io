@@ -1,13 +1,95 @@
 <!doctype html> 
 <html lang="en"> 
-<head>
-  <style>
-    p {
+<head> 
+    <meta charset="UTF-8" />
+    <title>Making your first Phaser 3 Game - Part 1</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
+    <style type="text/css">
+        body {
+            display: block;
+            margin: 1px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+         h1{
+            text-align: center;
+            text-decoration: strong;
+            font-family: helvetica;
+        }
         
-        font-size:64px;
-    }
+    </style>
 </head>
 <body>
-  <p>Under Construction</p>
+<h1>Under construction</h1>
+
+<script type="text/javascript">
+
+    var config = {
+        type: Phaser.AUTO,
+        width: 2000,
+        height: 800,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: { y: 1800 },
+                debug: false
+            }},
+
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
+
+    var game = new Phaser.Game(config);
+
+    window.onload = function() {
+    resize();
+    resize();
+    resize();
+    resize();
+    resize();
+    resize();
+    resize();
+    window.addEventListener("resize", resize, false);
+    }
+
+    function preload ()
+    {
+        this.load.image('background', 'panda/level2/background2.jpg');
+    }
+
+    function create ()
+    {
+        this.add.image(1000, 400, 'background');
+    }
+
+    function update ()
+    {
+    }
+
+
+    function resize() {
+    var canvas = document.querySelector("canvas");
+    var windowWidth = window.innerWidth;
+    var windowHeight = window.innerHeight;
+    var windowRatio = windowWidth / windowHeight;
+    var gameRatio = game.config.width / game.config.height;
+
+    if(windowRatio < gameRatio){
+        canvas.style.width = windowWidth + "px";
+        canvas.style.height = (windowWidth / gameRatio) + "px";
+    }
+    else {
+        canvas.style.width = (windowHeight * gameRatio) + "px";
+        canvas.style.height = windowHeight + "px";
+    }
+    }
+
+</script>
+
 </body>
 </html>
