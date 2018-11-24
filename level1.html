@@ -135,7 +135,7 @@
         platformsm1 = this.physics.add.staticGroup();
         platformsm1.create(1200, 580, 'groundsm').setScale(0.3).refreshBody();
         platformsm2 = this.physics.add.staticGroup();
-        platformsm2.create(830, 430, 'groundsm').setScale(0.3).refreshBody();
+        
         platformsm3 = this.physics.add.staticGroup();
         
 
@@ -252,7 +252,8 @@
    			/*doors = this.physics.add.sprite(1870,640,'doorstripe');
     		doors.setCollideWorldBounds(true);
     		this.physics.add.collider(platforms, doors);*/
-   			doortext.setText('find and collect key');
+   			platformsm2.create(830, 430, 'groundsm').setScale(0.3).refreshBody();
+			
    			dclose();
    			
    		}
