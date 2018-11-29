@@ -34,7 +34,7 @@
             default: 'arcade',
             arcade: {
                 gravity: { y: 1800 },
-                debug: true
+                debug: false
             }},
 
         scene: {
@@ -46,11 +46,17 @@
 
     var game = new Phaser.Game(config);
     var platforms;
-    var waters;
     var player;
     var cursors;
     var smplatw;
     var smplat;
+    var score=0;
+    var scoreText;
+    var food;
+    var pass;
+    var buttons;
+    var buttons2;
+
     var gameOver=false;
 
     window.onload = function() {
@@ -70,8 +76,11 @@
         this.load.image('platform', 'panda/level2/ground2.png');
         this.load.image('platformsm', 'panda/level2/groundsm2.png');
         this.load.image('water', 'panda/level2/water2.png');
+        this.load.image('apple', 'panda/level2/apple2.png');
+        this.load.image('pass2', 'panda/level2/key2.png');
+        this.load.image('button2', 'panda/level2/button2.png');
         this.load.spritesheet('panda2', 'panda/level2/panda2.png', {frameWidth: 70, frameHeight: 100 });
-        //this.load.image('background', 'panda/level2/background2.jpg');
+        
     }
 
     function create ()
@@ -82,23 +91,30 @@
         platforms.create(800, 760, 'platform');
         platforms.create(2400, 760, 'platform');
 
-        waters = this.physics.add.staticGroup();
-        //waters.create(700, 760, 'water').setScale(1.5).refreshBody();
+        //var waters;
+        
+        //waters.create(700, 760, 'water').setScale(0).refreshBody();
         //waters.create(1700, 760, 'water').setScale(1.5).refreshBody();  
         smplat = this.physics.add.staticGroup();
         smplat.create(350, 580, 'platformsm').setScale(0.3).refreshBody();
-        smplat.create(80, 150, 'platformsm').setScale(0.3).refreshBody();
+        /*smplat.create(80, 150, 'platformsm').setScale(0.3).refreshBody();
         smplat.create(480, 150, 'platformsm').setScale(0.3).refreshBody();
         smplat.create(1200, 580, 'platformsm').setScale(0.3).refreshBody();
         smplat.create(1600, 440, 'platformsm').setScale(0.3).refreshBody();
         smplat.create(1900, 240, 'platformsm').setScale(0.3).refreshBody();
         smplat.create(1600, 680, 'platformsm').setScale(0.3).refreshBody();
         smplat.create(1800, 680, 'platformsm').setScale(0.3).refreshBody();
-        smplat.create(2000, 680, 'platformsm').setScale(0.3).refreshBody();
+        smplat.create(2000, 680, 'platformsm').setScale(0.3).refreshBody();*/
+        food = this.physics.add.staticGroup();
+        food.create(680, 480, 'apple');
+        food.create(1280, 480, 'apple');
+        food.create(1210, 70, 'apple');
 
+        pass = this.physics.add.staticGroup();
+        buttons = this.physics.add.staticGroup();
 
         smplatw = this.physics.add.staticGroup();
-        smplatw.create(680, 450, 'platformsm').setScale(0.3).refreshBody();
+        smplatw.create(680, 430, 'platformsm').setScale(0.3).refreshBody();
 
         player = this.physics.add.sprite(50, 640, 'panda2');
         player.setBounce(0.2);
@@ -124,14 +140,17 @@
             repeat: -1
         });
         cursors = this.input.keyboard.createCursorKeys();
+        scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '36px', fill: '#000' });
 
         this.physics.add.collider(platforms, player);
-        this.physics.add.collider(waters, player, drown, null, this);
-        this.physics.add.collider(smplatw, player, watershow, null, this);
+        //this.physics.add.collider(waters, player, drown, null, this);
+        this.physics.add.collider(smplatw, player, death, null, this).name = 'platf';
         this.physics.add.collider(smplat, player);
+        this.physics.add.collider(player, buttons, showall, null, this).name = 'butt';
+        this.physics.add.overlap(player, food, collect, null, this);
 
 
-        
+         
     }
     
 
@@ -167,10 +186,39 @@
         }
     }
 
-    function watershow()
+    function collect(player, food)
     {
+        food.disableBody(true, true)
+        score=score+10;
+        scoreText.setText('score: ' + score);
+        //this.sound.play('collect');
+
+    }
+
+    function death()
+    {   
+        //smplat.create(1200, 400, 'platformsm').setScale(0.3).refreshBody();
+        var waters = this.physics.add.staticGroup();
         waters.create(700, 760, 'water').setScale(1.5).refreshBody();
         waters.create(1700, 760, 'water').setScale(1.5).refreshBody();
+        this.physics.add.collider(waters, player, drown, null, this);
+
+        smplat.create(80, 250, 'platformsm').setScale(0.3).refreshBody();
+        smplat.create(480, 150, 'platformsm').setScale(0.3).refreshBody();
+        smplat.create(920, 290, 'platformsm').setScale(0.3).refreshBody();
+
+        pass.create(1600, 480, 'pass2');
+        buttons.create(60, 235, 'button2');
+
+        
+
+        smplat.create(680, 430, 'platformsm').setScale(0.3).refreshBody();
+        this.physics.world.colliders.remove(this.physics.world.colliders.getActive().find(function(i){
+                    return i.name == 'platf'
+                    }));
+        
+        
+        
     }
 
     function drown()
@@ -179,6 +227,21 @@
         player.setTint(0xff0000);
         player.anims.play('turn', false);   
         gameOver = true;
+    }
+
+    function showall()
+    {
+        smplat.create(1600, 680, 'platformsm').setScale(0.3).refreshBody();
+        smplat.create(1800, 680, 'platformsm').setScale(0.3).refreshBody();
+        smplat.create(2000, 680, 'platformsm').setScale(0.3).refreshBody();
+
+        buttons2 = this.physics.add.staticGroup();
+        buttons2.create(60, 235, 'button2');
+        this.physics.add.collider(player, buttons2);
+
+        this.physics.world.colliders.remove(this.physics.world.colliders.getActive().find(function(i){
+                    return i.name == 'butt'
+                    }));
     }
 
     function resize() {
