@@ -34,7 +34,7 @@
             default: 'arcade',
             arcade: {
                 gravity: { y: 1800 },
-                debug: false
+                debug: true
             }},
 
         scene: {
@@ -83,18 +83,31 @@
         this.load.image('button2', 'panda/level2/button2.png');
         this.load.image('doorc2', 'panda/level2/doorc2.png');
         this.load.image('dooro2', 'panda/level2/dooro2.png');
+        this.load.image('rain2', 'panda/level2/rain2.png');
         this.load.image('gameover2', 'panda/level2/gameover2.png');
         this.load.spritesheet('panda2', 'panda/level2/panda2.png', {frameWidth: 70, frameHeight: 100 });
 
         this.load.audio('jump', 'panda/level2/jump4.mp3');
         this.load.audio('collect', 'panda/level2/collect.mp3');
         this.load.audio('gameov', 'panda/level2/gameov.mp3');
+        this.load.audio('buttsound', 'panda/level2/buttsound.mp3');
+        this.load.audio('gateop', 'panda/level2/gateop.mp3');
         
     }
 
     function create ()
     {
         this.add.image(1000, 400, 'background');
+
+
+
+       /* var particles = this.add.particles('rain2');
+        var emitter = particles.createEmitter({
+            speed: 100,
+            scale: { start: 1, end: 0 },
+            blendMode: 'normal'
+        });*/
+
 
         platforms = this.physics.add.staticGroup();
         platforms.create(800, 760, 'platform');
@@ -152,7 +165,7 @@
             repeat: -1
         });
         cursors = this.input.keyboard.createCursorKeys();
-        scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '36px', fill: '#000' });
+        scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '36px', fill: '#fff' });
 
         this.physics.add.collider(platforms, player);
         //this.physics.add.collider(waters, player, drown, null, this);
@@ -222,6 +235,7 @@
         if(score==50)
         {
             doorso2.create(1920, 130, 'dooro2').setScale(1.5).refreshBody();
+            this.sound.play('gateop');
 
             smplat.create(1660, 380, 'platformsm').setScale(0.3).refreshBody();
 
@@ -239,6 +253,7 @@
             gameOver = true;
             this.sound.play('gameov');
             this.add.image(940, 350, 'gameover2');
+            var msgText = this.add.text(700, 450, 'Collect all apples first', { fontSize: '36px', fill: '#fff' });
         }
 
     }
@@ -280,7 +295,8 @@
     }
 
     function showall()
-    {
+    {   
+        this.sound.play('buttsound');
         smplat.create(1600, 680, 'platformsm').setScale(0.3).refreshBody();
         smplat.create(1800, 680, 'platformsm').setScale(0.3).refreshBody();
         smplat.create(2000, 680, 'platformsm').setScale(0.3).refreshBody();
