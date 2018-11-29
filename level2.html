@@ -22,7 +22,7 @@
     </style>
 </head>
 <body>
-<h1>Under construction</h1>
+<h1>LEVEL 2</h1>
 
 <script type="text/javascript">
 
@@ -56,6 +56,8 @@
     var pass;
     var buttons;
     var buttons2;
+    var doorsc2;
+    var doorso2;
 
     var gameOver=false;
 
@@ -79,7 +81,14 @@
         this.load.image('apple', 'panda/level2/apple2.png');
         this.load.image('pass2', 'panda/level2/key2.png');
         this.load.image('button2', 'panda/level2/button2.png');
+        this.load.image('doorc2', 'panda/level2/doorc2.png');
+        this.load.image('dooro2', 'panda/level2/dooro2.png');
+        this.load.image('gameover2', 'panda/level2/gameover2.png');
         this.load.spritesheet('panda2', 'panda/level2/panda2.png', {frameWidth: 70, frameHeight: 100 });
+
+        this.load.audio('jump', 'panda/level2/jump4.mp3');
+        this.load.audio('collect', 'panda/level2/collect.mp3');
+        this.load.audio('gameov', 'panda/level2/gameov.mp3');
         
     }
 
@@ -107,8 +116,8 @@
         smplat.create(2000, 680, 'platformsm').setScale(0.3).refreshBody();*/
         food = this.physics.add.staticGroup();
         food.create(680, 480, 'apple');
-        food.create(1280, 480, 'apple');
-        food.create(1210, 70, 'apple');
+        food.create(1280, 580, 'apple');
+        food.create(1250, 70, 'apple');
 
         pass = this.physics.add.staticGroup();
         buttons = this.physics.add.staticGroup();
@@ -119,6 +128,9 @@
         player = this.physics.add.sprite(50, 640, 'panda2');
         player.setBounce(0.2);
         player.setCollideWorldBounds(true);
+
+        doorsc2 = this.physics.add.staticGroup();
+        doorso2 = this.physics.add.staticGroup();
         
         this.anims.create({
             key: 'left',
@@ -146,8 +158,11 @@
         //this.physics.add.collider(waters, player, drown, null, this);
         this.physics.add.collider(smplatw, player, death, null, this).name = 'platf';
         this.physics.add.collider(smplat, player);
+        this.physics.add.collider(player, doorsc2).name = 'doorcr';
         this.physics.add.collider(player, buttons, showall, null, this).name = 'butt';
-        this.physics.add.overlap(player, food, collect, null, this);
+        this.physics.add.overlap(player, food, collecta, null, this);
+        this.physics.add.overlap(player, pass, last, null, this);
+        this.physics.add.collider(player, doorso2);
 
 
          
@@ -181,17 +196,50 @@
 
         if (cursors.up.isDown && player.body.touching.down)
         {
-              
+            this.sound.play('jump');  
             player.setVelocityY(-750);
         }
     }
 
-    function collect(player, food)
+    function collecta(player, food)
     {
         food.disableBody(true, true)
         score=score+10;
         scoreText.setText('score: ' + score);
-        //this.sound.play('collect');
+        this.sound.play('collect');
+
+        
+
+    }
+
+    function last(player, pass)
+    {
+        pass.disableBody(true, true)
+
+        score = score+20;
+        scoreText.setText('score:' + score);
+
+        if(score==50)
+        {
+            doorso2.create(1920, 130, 'dooro2').setScale(1.5).refreshBody();
+
+            smplat.create(1660, 380, 'platformsm').setScale(0.3).refreshBody();
+
+            this.physics.world.colliders.remove(this.physics.world.colliders.getActive().find(function(i){
+                    return i.name == 'doorcr'
+                    }));
+
+            this.sound.play('collect');
+        }
+        else
+        {
+            this.physics.pause();
+            player.setTint(0xff0000);
+            player.anims.play('turn', false);   
+            gameOver = true;
+            this.sound.play('gameov');
+            this.add.image(940, 350, 'gameover2');
+        }
 
     }
 
@@ -227,6 +275,8 @@
         player.setTint(0xff0000);
         player.anims.play('turn', false);   
         gameOver = true;
+        this.sound.play('gameov');
+        this.add.image(940, 350, 'gameover2');
     }
 
     function showall()
@@ -234,6 +284,12 @@
         smplat.create(1600, 680, 'platformsm').setScale(0.3).refreshBody();
         smplat.create(1800, 680, 'platformsm').setScale(0.3).refreshBody();
         smplat.create(2000, 680, 'platformsm').setScale(0.3).refreshBody();
+
+        smplat.create(1900, 250, 'platformsm').setScale(0.3).refreshBody();
+
+        smplat.create(1280, 530, 'platformsm').setScale(0.3).refreshBody();
+
+        doorsc2.create(1920, 130, 'doorc2').setScale(1.5).refreshBody();
 
         buttons2 = this.physics.add.staticGroup();
         buttons2.create(60, 235, 'button2');
