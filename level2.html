@@ -34,7 +34,7 @@
             default: 'arcade',
             arcade: {
                 gravity: { y: 1800 },
-                debug: true
+                debug: false
             }},
 
         scene: {
@@ -58,17 +58,18 @@
     var buttons2;
     var doorsc2;
     var doorso2;
+    var playerpx2;
 
     var gameOver=false;
 
     window.onload = function() {
     resize();
-    resize();
-    resize();
-    resize();
-    resize();
-    resize();
-    resize();
+    // resize();
+    // resize();
+    // resize();
+    // resize();
+    // resize();
+    // resize();
     window.addEventListener("resize", resize, false);
     }
 
@@ -124,12 +125,13 @@
 
 
 
-        this.load.image('background', 'panda/level2/background2.jpg');
-        
+        this.load.image('back', 'panda/level2/back2.jpeg');
+        this.load.image('watwave2', 'panda/level2/watwave.png');
         this.load.image('cloud', 'panda/level2/cloud2.png');
         this.load.image('platform', 'panda/level2/ground2.png');
         this.load.image('platformsm', 'panda/level2/groundsm2.png');
-        this.load.image('water', 'panda/level2/water2.png');
+        //this.load.image('water', 'panda/level2/water2.png');
+        this.load.image('win2', 'panda/level2/win2.png');
         this.load.image('apple', 'panda/level2/apple2.png');
         this.load.image('pass2', 'panda/level2/key2.png');
         this.load.image('button2', 'panda/level2/button2.png');
@@ -137,8 +139,8 @@
         this.load.image('dooro2', 'panda/level2/dooro2.png');
         this.load.image('rain2', 'panda/level2/rain2.png');
         this.load.image('gameover2', 'panda/level2/gameover2.png');
-        this.load.spritesheet('panda2', 'panda/level2/panda2.png', {frameWidth: 70, frameHeight: 100 });
-
+        this.load.spritesheet('pandapx2', 'panda/level2/pandapx2.png', {frameWidth: 70, frameHeight: 100 });
+        this.load.spritesheet('startBtn', 'panda/level2/startBtn.png', {frameWidth: 60, frameHeight: 60 });
         this.load.audio('jump', 'panda/level2/jump4.mp3');
         this.load.audio('rainsn2', 'panda/level2/rainsn2.mp3');
         this.load.audio('collect', 'panda/level2/collect.mp3');
@@ -150,7 +152,7 @@
 
     function create ()
     {
-        this.add.image(1000, 400, 'background');
+        this.add.image(1000, 400, 'back');
         
         
 
@@ -170,7 +172,10 @@
         this.add.image(1900, 60, 'cloud');
 
        
+        // this.startBtn = this.add.sprite(500, 400, 'startBtn').setInteractive();
 
+        
+        // this.startBtn.on('pointerdown', startGame); // Start game on click.
 
         platforms = this.physics.add.staticGroup();
         platforms.create(800, 760, 'platform');
@@ -191,44 +196,45 @@
         smplatw = this.physics.add.staticGroup();
         smplatw.create(680, 430, 'platformsm').setScale(0.3).refreshBody();
 
-        player = this.physics.add.sprite(50, 640, 'panda2');
-        player.setBounce(0.2);
-        player.setCollideWorldBounds(true);
+        playerpx2 = this.physics.add.sprite(50, 640, 'pandapx2');
+        playerpx2.setBounce(0.2);
+        playerpx2.setCollideWorldBounds(true);
 
         doorsc2 = this.physics.add.staticGroup();
         doorso2 = this.physics.add.staticGroup();
         
         this.anims.create({
             key: 'left',
-            frames: this.anims.generateFrameNumbers('panda2', { start: 0, end: 3 }),
+            frames: this.anims.generateFrameNumbers('pandapx2', { start: 0, end: 3 }),
             frameRate: 10,
             repeat: -1
         });
 
         this.anims.create({
             key: 'turn',
-            frames: [ { key: 'panda2', frame: 4 } ],
+            frames: [ { key: 'pandapx2', frame: 4 } ],
             frameRate: 20
         });
 
         this.anims.create({
             key: 'right',
-            frames: this.anims.generateFrameNumbers('panda2', { start: 5, end: 7 }),
+            frames: this.anims.generateFrameNumbers('pandapx2', { start: 5, end: 7 }),
             frameRate: 10,
             repeat: -1
         });
         cursors = this.input.keyboard.createCursorKeys();
         scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '36px', fill: '#fff' });
 
-        this.physics.add.collider(platforms, player);
+        this.physics.add.collider(platforms, playerpx2);
         //this.physics.add.collider(waters, player, drown, null, this);
-        this.physics.add.collider(smplatw, player, death, null, this).name = 'platf';
-        this.physics.add.collider(smplat, player);
-        this.physics.add.collider(player, doorsc2).name = 'doorcr';
-        this.physics.add.collider(player, buttons, showall, null, this).name = 'butt';
-        this.physics.add.overlap(player, food, collecta, null, this);
-        this.physics.add.overlap(player, pass, last, null, this);
-        this.physics.add.collider(player, doorso2);
+        this.physics.add.collider(smplatw, playerpx2, death, null, this).name = 'platf';
+        this.physics.add.collider(smplat, playerpx2);
+        this.physics.add.collider(playerpx2, doorsc2).name = 'doorcr';
+        this.physics.add.collider(playerpx2, buttons, showall, null, this).name = 'butt';
+        this.physics.add.overlap(playerpx2, food, collecta, null, this);
+        this.physics.add.overlap(playerpx2, pass, last, null, this);
+        this.physics.add.collider(playerpx2, doorso2, win, null, this);
+        
 
 
          
@@ -243,31 +249,31 @@
         }
         if (cursors.left.isDown)
         {
-            player.setVelocityX(-300);
+            playerpx2.setVelocityX(-300);
 
-            player.anims.play('left', true);
+            playerpx2.anims.play('left', true);
         }
         else if (cursors.right.isDown)
         {
-            player.setVelocityX(300);
+            playerpx2.setVelocityX(300);
 
-            player.anims.play('right', true);
+            playerpx2.anims.play('right', true);
         }
         else
         {
-            player.setVelocityX(0);
+            playerpx2.setVelocityX(0);
 
-            player.anims.play('turn');
+            playerpx2.anims.play('turn');
         }
 
-        if (cursors.up.isDown && player.body.touching.down)
+        if (cursors.up.isDown && playerpx2.body.touching.down)
         {
             this.sound.play('jump');  
-            player.setVelocityY(-750);
+            playerpx2.setVelocityY(-750);
         }
     }
 
-    function collecta(player, food)
+    function collecta(playerpx2, food)
     {
         food.disableBody(true, true)
         score=score+10;
@@ -278,7 +284,7 @@
 
     }
 
-    function last(player, pass)
+    function last(playerpx2, pass)
     {
         pass.disableBody(true, true)
 
@@ -301,12 +307,16 @@
         else
         {
             this.physics.pause();
-            player.setTint(0xff0000);
-            player.anims.play('turn', false);   
+            playerpx2.setTint(0xff0000);
+            playerpx2.anims.play('turn', false);   
             gameOver = true;
             this.sound.play('gameov');
             this.add.image(940, 350, 'gameover2');
             var msgText = this.add.text(700, 450, 'Collect all apples first', { fontSize: '36px', fill: '#fff' });
+
+            this.startBtn = this.add.sprite(940, 550, 'startBtn').setInteractive();
+
+            this.startBtn.on('pointerdown', startGame); // Start game on click.
         }
 
     }
@@ -314,10 +324,12 @@
     function death()
     {   
         
-        var waters = this.physics.add.staticGroup();
-        waters.create(700, 760, 'water').setScale(1.5).refreshBody();
-        waters.create(1700, 760, 'water').setScale(1.5).refreshBody();
-        this.physics.add.collider(waters, player, drown, null, this);
+        var watwave2 = this.physics.add.staticGroup();
+        watwave2.create(400, 745, 'watwave2').setScale(1.2).refreshBody();
+        watwave2.create(1200, 745, 'watwave2').setScale(1.2).refreshBody();
+        watwave2.create(2000, 745, 'watwave2').setScale(1.2).refreshBody();
+        this.physics.add.collider(watwave2, playerpx2, drown, null, this);
+        this.physics.add.collider(platforms, watwave2, delpl, null, this);
 
         smplat.create(80, 250, 'platformsm').setScale(0.3).refreshBody();
         smplat.create(480, 150, 'platformsm').setScale(0.3).refreshBody();
@@ -340,19 +352,24 @@
     function drown()
     {
         this.physics.pause();
-        player.setTint(0xff0000);
-        player.anims.play('turn', false);   
+        playerpx2.setTint(0xff0000);
+        playerpx2.anims.play('turn', false);   
         gameOver = true;
         this.sound.play('gameov');
         this.add.image(940, 350, 'gameover2');
+
+        this.startBtn = this.add.sprite(940, 500, 'startBtn').setInteractive();
+
+        
+        this.startBtn.on('pointerdown', startGame); // Start game on click.
     }
 
     function showall()
     {   
         this.sound.play('buttsound');
-        smplat.create(1600, 680, 'platformsm').setScale(0.3).refreshBody();
-        smplat.create(1800, 680, 'platformsm').setScale(0.3).refreshBody();
-        smplat.create(2000, 680, 'platformsm').setScale(0.3).refreshBody();
+        smplat.create(1600, 670, 'platformsm').setScale(0.3).refreshBody();
+        smplat.create(1800, 670, 'platformsm').setScale(0.3).refreshBody();
+        smplat.create(2000, 670, 'platformsm').setScale(0.3).refreshBody();
 
         smplat.create(1900, 250, 'platformsm').setScale(0.3).refreshBody();
 
@@ -362,11 +379,32 @@
 
         buttons2 = this.physics.add.staticGroup();
         buttons2.create(60, 235, 'button2');
-        this.physics.add.collider(player, buttons2);
+        this.physics.add.collider(playerpx2, buttons2);
 
         this.physics.world.colliders.remove(this.physics.world.colliders.getActive().find(function(i){
                     return i.name == 'butt'
                     }));
+    }
+
+    function startGame()
+    {
+        window.location.replace("level2.html");
+    }
+
+
+    function win()
+    {
+            this.physics.pause();
+            playerpx2.setTint(0x008000);
+            playerpx2.anims.play('turn');
+            gameOver = true;            
+            //window.location.replace("level1.html");
+            this.add.image(940, 350, 'win2');
+    }
+
+    function delpl(platform, watwave)
+    {
+        platform.disableBody(true, true);
     }
 
     function resize() {
