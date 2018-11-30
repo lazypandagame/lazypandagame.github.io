@@ -2,7 +2,7 @@
 <html lang="en"> 
 <head> 
     <meta charset="UTF-8" />
-    <title>LEVEL 2</title>
+    <title>Making your first Phaser 3 Game - Part 1</title>
     <script src="//cdn.jsdelivr.net/npm/phaser@3.11.0/dist/phaser.js"></script>
     <style type="text/css">
         body {
@@ -34,7 +34,7 @@
             default: 'arcade',
             arcade: {
                 gravity: { y: 1800 },
-                debug: false
+                debug: true
             }},
 
         scene: {
@@ -74,7 +74,59 @@
 
     function preload ()
     {
+        var progressBar = this.add.graphics();
+        var progressBox = this.add.graphics();
+            progressBox.fillStyle(0x222222, 0.8);
+            progressBox.fillRect(860, 370, 320, 50);
+            
+        var width = this.cameras.main.width;
+        var height = this.cameras.main.height;
+        var loadingText = this.make.text({
+                x: width / 2,
+                y: height / 2 - 50,
+                text: 'Loading...',
+                style: {
+                    font: '20px monospace',
+                    fill: '#ffffff'
+                }
+            });
+            loadingText.setOrigin(0.5, 0.5);
+            
+        var percentText = this.make.text({
+                x: width / 2,
+                y: height / 2 - 5,
+                text: '0%',
+                style: {
+                    font: '18px monospace',
+                    fill: '#ffffff'
+                }
+            });
+            percentText.setOrigin(0.5, 0.5);
+            
+            
+            
+        this.load.on('progress', function (value) {
+                percentText.setText(parseInt(value * 100) + '%');
+                progressBar.clear();
+                progressBar.fillStyle(0xffffff, 1);
+                progressBar.fillRect(870, 380, 300 * value, 30);
+            });
+            
+            
+
+        this.load.on('complete', function () {
+                progressBar.destroy();
+                progressBox.destroy();
+                loadingText.destroy();
+                percentText.destroy();
+                
+            });     
+
+
+
         this.load.image('background', 'panda/level2/background2.jpg');
+        
+        this.load.image('cloud', 'panda/level2/cloud2.png');
         this.load.image('platform', 'panda/level2/ground2.png');
         this.load.image('platformsm', 'panda/level2/groundsm2.png');
         this.load.image('water', 'panda/level2/water2.png');
@@ -88,6 +140,7 @@
         this.load.spritesheet('panda2', 'panda/level2/panda2.png', {frameWidth: 70, frameHeight: 100 });
 
         this.load.audio('jump', 'panda/level2/jump4.mp3');
+        this.load.audio('rainsn2', 'panda/level2/rainsn2.mp3');
         this.load.audio('collect', 'panda/level2/collect.mp3');
         this.load.audio('gameov', 'panda/level2/gameov.mp3');
         this.load.audio('buttsound', 'panda/level2/buttsound.mp3');
@@ -98,35 +151,35 @@
     function create ()
     {
         this.add.image(1000, 400, 'background');
+        
+        
 
+        this.add.image(100, 460, 'rain2');
+        this.add.image(800, 480, 'rain2');        
+        this.add.image(1540, 480, 'rain2');
+        this.add.image(2000, 450, 'rain2');
+        
 
+        this.add.image(50, 80, 'cloud');
+        this.add.image(350, 60, 'cloud');
+        this.add.image(800, 70, 'cloud');
+        this.add.image(700, 100, 'cloud');
+        this.add.image(1400, 90, 'cloud');
+        this.add.image(1140, 70, 'cloud');
+        this.add.image(1740, 30, 'cloud');
+        this.add.image(1900, 60, 'cloud');
 
-       /* var particles = this.add.particles('rain2');
-        var emitter = particles.createEmitter({
-            speed: 100,
-            scale: { start: 1, end: 0 },
-            blendMode: 'normal'
-        });*/
+       
 
 
         platforms = this.physics.add.staticGroup();
         platforms.create(800, 760, 'platform');
         platforms.create(2400, 760, 'platform');
 
-        //var waters;
-        
-        //waters.create(700, 760, 'water').setScale(0).refreshBody();
-        //waters.create(1700, 760, 'water').setScale(1.5).refreshBody();  
+          
         smplat = this.physics.add.staticGroup();
         smplat.create(350, 580, 'platformsm').setScale(0.3).refreshBody();
-        /*smplat.create(80, 150, 'platformsm').setScale(0.3).refreshBody();
-        smplat.create(480, 150, 'platformsm').setScale(0.3).refreshBody();
-        smplat.create(1200, 580, 'platformsm').setScale(0.3).refreshBody();
-        smplat.create(1600, 440, 'platformsm').setScale(0.3).refreshBody();
-        smplat.create(1900, 240, 'platformsm').setScale(0.3).refreshBody();
-        smplat.create(1600, 680, 'platformsm').setScale(0.3).refreshBody();
-        smplat.create(1800, 680, 'platformsm').setScale(0.3).refreshBody();
-        smplat.create(2000, 680, 'platformsm').setScale(0.3).refreshBody();*/
+
         food = this.physics.add.staticGroup();
         food.create(680, 480, 'apple');
         food.create(1280, 580, 'apple');
@@ -260,7 +313,7 @@
 
     function death()
     {   
-        //smplat.create(1200, 400, 'platformsm').setScale(0.3).refreshBody();
+        
         var waters = this.physics.add.staticGroup();
         waters.create(700, 760, 'water').setScale(1.5).refreshBody();
         waters.create(1700, 760, 'water').setScale(1.5).refreshBody();
